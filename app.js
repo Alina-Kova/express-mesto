@@ -31,13 +31,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/cards', cardsRoutes);
 app.use('/users', usersRoutes);
-
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+// здесь обрабатываем ошибку 404
+app.use((req, res) => {
+  res.status(404).send({ message: 'Карточка или пользователь не найден.' });
 });
 
-// {
-//   "name": "Тестовый пользователь",
-//   "about": "Информация о себе",
-//   "avatar": "https://www.biography.com/.image/t_share/MTE4MDAzNDEwODQwOTQ2MTkw/ada-lovelace-20825279-1-402.jpg"
-// }
+app.listen(PORT);
