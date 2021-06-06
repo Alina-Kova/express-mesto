@@ -6,6 +6,7 @@ const User = require('../models/users');
 const NotFoundError = require('../errors/not-found-err');
 const IncorrectDataError = require('../errors/incorrect-data-err');
 const AuthorizationError = require('../errors/auth-err');
+const ExistingDataError = require('../errors/existing-data-err');
 
 module.exports.getUser = (req, res, next) => {
   User.find({})
@@ -13,17 +14,34 @@ module.exports.getUser = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.getUserById = (req, res, next) => {
-  User.findById(req.params.userId)
+module.exports.getMe = (req, res, next) => {
+  User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь с указанным _id не найден.');
+        throw new NotFoundError('Пользователь не найден.');
       }
       return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        const error = new IncorrectDataError('Переданы некорректные данные при создании пользователя.');
+        const error = new NotFoundError('Пользователь с указанным _id не найден.');
+        return next(error);
+      }
+      return next(err);
+    });
+};
+
+module.exports.getUserById = (req, res, next) => {
+  User.findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден.');
+      }
+      return res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        const error = new NotFoundError('Пользователь с указанным _id не найден.');
         return next(error);
       }
       return next(err);
@@ -42,8 +60,16 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      // eslint-disable-next-line no-shadow
+      const { _id, email } = user;
+      res.status(200).send({ _id, email });
+    })
     .catch((err) => {
+      if (err.name === 'MongoError' && err.code === 11000) {
+        const error = new ExistingDataError('Пользователь с указанным email уже существует.');
+        return next(error);
+      }
       if (err.name === 'ValidationError') {
         const error = new IncorrectDataError('Переданы некорректные данные при создании пользователя.');
         return next(error);
