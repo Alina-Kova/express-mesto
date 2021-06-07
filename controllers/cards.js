@@ -22,7 +22,7 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findById(req.params.cardId)
+  Card.findById(req.params.id)
     // eslint-disable-next-line consistent-return
     .then((card) => {
       if (!card) {
@@ -35,7 +35,7 @@ module.exports.deleteCard = (req, res, next) => {
         throw new IncorrectDataError('Не возможно удалить карточку, она создана другим пользователем.');
       }
     })
-    .then(() => Card.findByIdAndDelete(req.params.cardId))
+    .then(() => Card.findByIdAndDelete(req.params.id))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -48,7 +48,7 @@ module.exports.deleteCard = (req, res, next) => {
 
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.id,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
@@ -69,7 +69,7 @@ module.exports.likeCard = (req, res, next) => {
 
 module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.id,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
