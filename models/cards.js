@@ -11,6 +11,11 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: {
+      // eslint-disable-next-line no-undef
+      validator: (value) => validator.isURL(value, { protocols: ['http', 'https'], require_protocol: true }),
+      message: 'Неправильный формат cсылки.',
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -18,7 +23,7 @@ const cardSchema = new mongoose.Schema({
     ref: 'user',
   },
   likes: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: [mongoose.Schema.Types.ObjectId],
     default: [],
     ref: 'user',
   },

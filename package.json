@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint .",
-    "start": "nodemon app.js",
+    "start": "node app.js",
     "dev": "nodemon app.js"
   },
   "repository": {
@@ -21,6 +21,8 @@
   "homepage": "https://github.com/Alina-Kova/express-mesto#readme",
   "devDependencies": {
     "eslint": "^7.27.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.3",
     "nodemon": "^2.0.7"
   },
   "dependencies": {
@@ -28,8 +30,6 @@
     "body-parser": "^1.19.0",
     "celebrate": "^14.0.0",
     "dotenv": "^10.0.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.23.3",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.12",

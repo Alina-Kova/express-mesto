@@ -29,14 +29,13 @@ module.exports.deleteCard = (req, res, next) => {
         const error = new NotFoundError('Карточка с указанным _id не найдена.');
         return next(error);
       }
-    })
-    .then((card) => {
-      if (card.owner !== req.user._id) {
+      if (card.owner.toString() !== req.user._id.toString()) {
         throw new IncorrectDataError('Не возможно удалить карточку, она создана другим пользователем.');
+      } else {
+        Card.findByIdAndDelete(req.params.id);
+        return res.send({ data: card });
       }
     })
-    .then(() => Card.findByIdAndDelete(req.params.id))
-    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
         const error = new IncorrectDataError('Переданы некорректные данные при удалении карточки.');
