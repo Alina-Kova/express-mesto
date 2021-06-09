@@ -31,10 +31,11 @@ module.exports.deleteCard = (req, res, next) => {
       }
       if (card.owner.toString() !== req.user._id.toString()) {
         throw new IncorrectDataError('Не возможно удалить карточку, она создана другим пользователем.');
-      } else {
-        Card.findByIdAndDelete(req.params.id);
-        return res.send({ data: card });
       }
+      Card.findByIdAndDelete(req.params.id)
+        .then((cardRemoval) => {
+          res.send({ data: cardRemoval });
+        });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
