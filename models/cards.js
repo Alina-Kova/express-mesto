@@ -1,3 +1,5 @@
+import validator from 'validator';
+
 const mongoose = require('mongoose');
 
 // схема карточки
@@ -12,7 +14,6 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      // eslint-disable-next-line no-undef
       validator: (value) => validator.isURL(value, { protocols: ['http', 'https'], require_protocol: true }),
       message: 'Неправильный формат cсылки.',
     },
